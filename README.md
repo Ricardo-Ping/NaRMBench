@@ -43,8 +43,9 @@
 - We provide a standardized pipeline to evaluate the performance of both original and retrained models which can be found in: [evaluation pipeline](3.evaluation/README.md).
 
 ## 4. [Downstream Analysis](4.downstream_analysis/README.md)
-- Code for generating ROC and PR curves: [ROC_curve.py](4.downstream_analysis/ROC_curve.py)
-- Code for selecting the optimal classification cut-off of each model:  [optimal_cut-off_selection.py](4.downstream_analysis/optimal_cut-off_selection.py)
+- This section contains scripts for downstream analyses and figure generation used in the paper.
+More scripts for visualization (e.g., distribution of predicted sites, replicate consistency, bias assessment, radar plots, and feature comparisons) are available in the `4.downstream_analysis/` directory.
+- Refer to the subdirectory [README](4.downstream_analysis/README.md) for detailed descriptions, input requirements, and usage examples.
 
 ## Authors
 - Tingting Luo

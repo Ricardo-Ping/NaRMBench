@@ -7,7 +7,7 @@ library(ggplot2)
 
 ##Distribution of predicted modification sites across transcript regions
 bed_files <- list.files(path = ".", pattern = "*.txt$", full.names = TRUE)
-bed_files
+#GroundTruth: ../ground_truth_sites/
 Group=c("Dorado-RNA004","Epinano-RNA004","GroundTruth","m6Anet-RNA004","SingleMod-RNA004","TandemMod-RNA004","Xron-RNA004")
 colors = c("#6affb9", "#9fcc62","black", "#f6c365", "#2e3792", "#8e5aa2", "#ef1fff")
 feature_anno=prepare_features(gtf_file="Homo_sapiens.GRCh38.112.gtf.gz")
@@ -61,8 +61,8 @@ for (tool in tools) {
   wt_data <- data %>%
   separate(V1, into = c("chr", "start", "strand"), sep = "_") %>%
   mutate(
-    strand = ifelse(strand == "*", "+", strand),  # 将*转换为+
-    end = start  # 根据您的需求，end与start相同
+    strand = ifelse(strand == "*", "+", strand),  
+    end = start  
   ) %>%
   select(chr, start, end, strand, status = V2, value = V3)
   
@@ -70,8 +70,8 @@ for (tool in tools) {
   ko_data <- data %>%
   separate(V1, into = c("chr", "start", "strand"), sep = "_") %>%
   mutate(
-    strand = ifelse(strand == "*", "+", strand),  # 将*转换为+
-    end = start  # 根据您的需求，end与start相同
+    strand = ifelse(strand == "*", "+", strand), 
+    end = start  
   ) %>%
   select(chr, start, end, strand, status = V2, value = V3)
   
@@ -148,5 +148,6 @@ ggplot(ratio_data, aes(x = factor(Tool, levels = tools_ordered), y = ratio_log2,
   labs(y = "log2(KO / WT)", x = NULL, fill = NULL) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+
 
 ggsave("m6A_count_barplot.pdf", width = 8, height = 5)

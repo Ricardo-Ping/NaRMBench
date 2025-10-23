@@ -38,9 +38,9 @@ def save_jaccard_results(results, output_path):
     transposed_results.to_csv(output_path, sep="\t", header=True, index_label="Model")
 
 def main():
-    folder_path_HeLa3 = "HeLa3/resulte"
-    folder_path_HeLa2 = "HeLa2/resulte"
-    folder_path_HeLa = "HeLa/nofilter"
+    folder_path_HeLa3 = "replicate1"
+    folder_path_HeLa2 = "replicate2"
+    folder_path_HeLa = "replicate3"
 
     bed_data_HeLa3 = read_bed_files(folder_path_HeLa3)
     bed_data_HeLa2 = read_bed_files(folder_path_HeLa2)
@@ -97,24 +97,24 @@ def correlation(bed_data_HeLa,bed_data_HeLa2,bed_data_HeLa3,model):
             .merge(bed_data_HeLa3[model].iloc[:,-2:], on='site', how='inner')
         
         colname = df_merged.columns.tolist()
-        colname = ["site", "Hela", "Hela2", "Hela3"]
+        colname = ["site", "1", "2", "3"]
         df_merged.columns = colname
 
         correlation_matrix = df_merged[['Hela', 'Hela2', 'Hela3']].corr()
 
         plt.figure(figsize=(8, 6))
         sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, 
-                    xticklabels=['HeLa', 'HeLa2', 'HeLa3'], 
-                    yticklabels=['HeLa', 'HeLa2', 'HeLa3'])
+                    xticklabels=['1', '2', '3'], 
+                    yticklabels=['1', '2', '3'])
         output_path = f'{model}_cor.pdf'
         plt.savefig(output_path, format='pdf')
         plt.close()
     except KeyError as e:
         print(f"KeyError: {e} - Skipping model: {model}")
 
-folder_path_HeLa3 = "HeLa3/resulte"
-folder_path_HeLa2 = "HeLa2/resulte"
-folder_path_HeLa = "HeLa/resulte"
+folder_path_HeLa3 = "replicate3"
+folder_path_HeLa2 = "replicate2"
+folder_path_HeLa = "replicate1"
 bed_data_HeLa3 = read_bed_files(folder_path_HeLa3)
 bed_data_HeLa2 = read_bed_files(folder_path_HeLa2)
 bed_data_HeLa = read_bed_files(folder_path_HeLa)
@@ -350,4 +350,5 @@ plt.tick_params(axis='y', labelsize=4)
 plt.tight_layout(pad=0.1)
 plt.savefig(f"./m6A_recall_motif.pdf", bbox_inches='tight')
 plt.close()
+
 

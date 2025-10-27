@@ -14,7 +14,9 @@ def read_bed_files(folder_path):
             model_name = filename.split('_')[0]
             file_path = os.path.join(folder_path, filename)
             
-            data = pd.read_csv(file_path, sep="\t", header=1, names=["chrom", "start", "end"])
+            data=pd.read_csv(file_path, sep='\t', header=None)
+            data[['chrom', 'start']] = data[0].str.split('_', expand=True)
+            data[['end']] = data[['start']]
             bed_data[model_name] = data
 
     return bed_data 
@@ -83,10 +85,12 @@ def read_bed_files(folder_path):
             model_name = filename.split('_')[0]
             file_path = os.path.join(folder_path, filename)
             data = pd.read_csv(file_path, sep="\t", header=0)
+            data[['chrom', 'start']] = data[0].str.split('_', expand=True)
+            data[['end']] = data[['start']]
             column = data.columns.tolist()
-            column[:4] = ["chrom", "start", "end", "strand"]
+            column[:4] = ["chrom", "start", "end"]
             data.columns = column
-            data["site"] = list(zip(data["chrom"], data["start"], data["end"], data["strand"]))
+            data["site"] = list(zip(data["chrom"], data["start"], data["end"]))
             data["prediction"] = data.iloc[:, 5]  
             bed_data[model] = data
     return bed_data
@@ -350,5 +354,6 @@ plt.tick_params(axis='y', labelsize=4)
 plt.tight_layout(pad=0.1)
 plt.savefig(f"./m6A_recall_motif.pdf", bbox_inches='tight')
 plt.close()
+
 
 

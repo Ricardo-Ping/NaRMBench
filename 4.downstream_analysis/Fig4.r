@@ -59,24 +59,22 @@ for (tool in tools) {
   wt_file <- paste0("./wt/", tool, "_m6A_with_labels_converted.txt")
   data <- read.table(wt_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
   wt_data <- data %>%
-  separate(V1, into = c("chr", "start", "strand"), sep = "_") %>%
-  mutate(
-    strand = ifelse(strand == "*", "+", strand),  
+  separate(V1, into = c("chr", "start"), sep = "_") %>%
+  mutate( 
     end = start  
   ) %>%
-  select(chr, start, end, strand, status = V2, value = V3)
+  select(chr, start, end, status = V2, value = V3)
   
   data <- read.table(ko_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
   ko_data <- data %>%
-  separate(V1, into = c("chr", "start", "strand"), sep = "_") %>%
+  separate(V1, into = c("chr", "start"), sep = "_") %>%
   mutate(
-    strand = ifelse(strand == "*", "+", strand), 
     end = start  
   ) %>%
-  select(chr, start, end, strand, status = V2, value = V3)
+  select(chr, start, end, status = V2, value = V3)
   
-  colnames(ko_data) <- c('chr', 'start', 'end', 'strand', 'status', 'value')
-  colnames(wt_data) <- c('chr', 'start', 'end', 'strand', 'status', 'value')
+  colnames(ko_data) <- c('chr', 'start', 'end', 'status', 'value')
+  colnames(wt_data) <- c('chr', 'start', 'end', 'status', 'value')
   threshold <- ifelse(is.null(tool_thresholds[[tool]]), 0.9, tool_thresholds[[tool]])
   
   wt_filtered <- wt_data %>% filter(value >= threshold)
@@ -151,3 +149,4 @@ ggplot(ratio_data, aes(x = factor(Tool, levels = tools_ordered), y = ratio_log2,
 
 
 ggsave("m6A_count_barplot.pdf", width = 8, height = 5)
+

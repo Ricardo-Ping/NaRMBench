@@ -122,7 +122,7 @@ folder_path_HeLa = "replicate1"
 bed_data_HeLa3 = read_bed_files(folder_path_HeLa3)
 bed_data_HeLa2 = read_bed_files(folder_path_HeLa2)
 bed_data_HeLa = read_bed_files(folder_path_HeLa)
-tools <- c("Xron-RNA004", "Dorado-RNA004","SingleMod-RNA004","TandemMod-RNA004","m6Anet-RNA004",'EpiNano-RNA004')
+tools <- ["Xron", "Dorado","SingleMod","TandemMod-retrain","m6Anet",'EpiNano-retrain']
 for model in tools: 
     correlation(bed_data_HeLa,bed_data_HeLa2,bed_data_HeLa3,model)
 
@@ -354,6 +354,7 @@ plt.tick_params(axis='y', labelsize=4)
 plt.tight_layout(pad=0.1)
 plt.savefig(f"./m6A_recall_motif.pdf", bbox_inches='tight')
 plt.close()
+
 
 
 

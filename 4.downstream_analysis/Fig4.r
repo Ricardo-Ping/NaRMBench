@@ -55,8 +55,8 @@ output_data <- data.frame(
 
 # Process each tool
 for (tool in tools) {
-  ko_file <- paste0("./",tool, "_m6A_with_labels_converted.txt")
-  wt_file <- paste0("./wt/", tool, "_m6A_with_labels_converted.txt")
+  ko_file <- paste0("./ko/",tool, "_m6A_with_labels_converted.txt")
+  wt_file <- paste0("./", tool, "_m6A_with_labels_converted.txt")
   data <- read.table(wt_file, header = FALSE, sep = "\t", stringsAsFactors = FALSE)
   wt_data <- data %>%
   separate(V1, into = c("chr", "start"), sep = "_") %>%
@@ -75,15 +75,10 @@ for (tool in tools) {
   
   colnames(ko_data) <- c('chr', 'start', 'end', 'status', 'value')
   colnames(wt_data) <- c('chr', 'start', 'end', 'status', 'value')
-  threshold <- ifelse(is.null(tool_thresholds[[tool]]), 0.9, tool_thresholds[[tool]])
+  threshold <- tool_thresholds[[tool]]
   
   wt_filtered <- wt_data %>% filter(value >= threshold)
-  
-  if (tool == "m6Anet-") {
-    ko_filtered <- ko_data %>% filter(value >= 0.8)
-  } else {
-    ko_filtered <- ko_data %>% filter(value >= threshold)
-  }
+  ko_filtered <- ko_data %>% filter(value >= threshold)
   
   wt_ko_common <- inner_join(wt_filtered, ko_filtered, 
                             by = c('chr', 'start', 'end'),
@@ -146,7 +141,4 @@ ggplot(ratio_data, aes(x = factor(Tool, levels = tools_ordered), y = ratio_log2,
   labs(y = "log2(KO / WT)", x = NULL, fill = NULL) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
 ggsave("m6A_count_barplot.pdf", width = 8, height = 5)
-

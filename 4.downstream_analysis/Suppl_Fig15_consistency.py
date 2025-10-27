@@ -11,7 +11,9 @@ mpl.rcParams['pdf.fonttype'] = 42
 
 ## Site overlap ratios heatmap
 def read_bed_file(file_path):
-    return pd.read_csv(file_path, sep='\t', header=None, usecols=[0, 1, 2], names=['chr', 'start', 'end'])
+    data=pd.read_csv(file_path, sep='\t', header=None)
+    data[['chr', 'pos']] = data[0].str.split('_', expand=True)
+    return data
 
 def calculate_overlap(df1, df2):
     merged = pd.merge(df1, df2, on=['chr', 'start', 'end'], how='inner')
@@ -137,8 +139,7 @@ for tool_name, file_path in tool_files.items():
     tool_data = pd.read_csv(file_path, sep="\t", header=None)
     tool_data = tool_data[tool_data.apply(lambda row: len(row.dropna()) > 3, axis=1)]
     tool_data = tool_data.iloc[:, [0, 2]].copy()      
-    tool_data[['chr', 'pos', 'strand']] = tool_data[0].str.split('_', expand=True)
-    tool_data = tool_data.drop(columns=[0, 'strand'])
+    tool_data[['chr', 'pos']] = tool_data[0].str.split('_', expand=True)
     tool_data[tool_data.columns[0]] = pd.to_numeric(tool_data[tool_data.columns[0]], errors='coerce')
     tool_data = tool_data.rename(columns={tool_data.columns[0]: f"{tool_name}"})
     tool_data['chr_pos'] = tool_data['chr'] + '_' + tool_data['pos']
@@ -159,5 +160,6 @@ for tool_name, file_path in tool_files.items():
     groundtruth_tool_data = groundtruth_tool_data[['chr_pos', f"groundtruth"]]
     groundtruth_tool_data = groundtruth_tool_data[groundtruth_tool_data[f"groundtruth"] != 0] 
     groundtruth_data[tool_name] = groundtruth_tool_data
+
 
 create_pairwise_plot(tool_data_dict, groundtruth_data, "groundtruth")

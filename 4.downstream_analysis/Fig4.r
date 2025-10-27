@@ -41,7 +41,7 @@ tool_thresholds <- list(
     'EpiNano-RNA004'=0.48
 )
 
-tools <- c("Xron-RNA004", "Dorado-RNA004","SingleMod-RNA004","TandemMod-RNA004","m6Anet-RNA004",'EpiNano-RNA004')
+tools <- c("Xron", "Dorado","SingleMod","TandemMod-retrain","m6Anet",'EpiNano-retrain')
 
 # Initialize data storage
 output_data <- data.frame(
@@ -142,3 +142,4 @@ ggplot(ratio_data, aes(x = factor(Tool, levels = tools_ordered), y = ratio_log2,
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave("m6A_count_barplot.pdf", width = 8, height = 5)
+

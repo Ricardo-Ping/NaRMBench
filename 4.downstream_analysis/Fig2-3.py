@@ -15,6 +15,7 @@ files = glob.glob("./*_m6A_with_labels_converted.txt")
 colors = ["#2e3792", "#8e5aa2", "#ef1fff", "#f6c365", "#9fcc62","#6affb9"]
 labels = [os.path.basename(file).split("_m6A_with_labels_converted.txt")[0] for file in files]
 
+##only sites covered by all tools for ROC curve / PRAUC curve
 ##ROC curve / PRAUC curve
 plt.figure(figsize=[6.4,6.4])
 for idx, file in enumerate(files):
@@ -181,4 +182,5 @@ def process_files(dataset_files):
     plt.tight_layout(pad=0.1)
     plt.savefig(f"./ratio_correlation_m6A.pdf")
     plt.close()
+
 process_files(files)

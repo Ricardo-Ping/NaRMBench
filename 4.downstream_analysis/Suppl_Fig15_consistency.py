@@ -139,10 +139,9 @@ for tool_name, file_path in tool_files.items():
     tool_data = pd.read_csv(file_path, sep="\t", header=None)
     tool_data = tool_data[tool_data.apply(lambda row: len(row.dropna()) > 3, axis=1)]
     tool_data = tool_data.iloc[:, [0, 2]].copy()      
-    tool_data[['chr', 'pos']] = tool_data[0].str.split('_', expand=True)
-    tool_data[tool_data.columns[0]] = pd.to_numeric(tool_data[tool_data.columns[0]], errors='coerce')
-    tool_data = tool_data.rename(columns={tool_data.columns[0]: f"{tool_name}"})
-    tool_data['chr_pos'] = tool_data['chr'] + '_' + tool_data['pos']
+    tool_data.columns = ['chr_pos', 'value']
+    tool_data[tool_data.columns[1]] = pd.to_numeric(tool_data[tool_data.columns[1]], errors='coerce')
+    tool_data = tool_data.rename(columns={tool_data.columns[1]: f"{tool_name}"})
     tool_data = tool_data[['chr_pos', f"{tool_name}"]]
     tool_data_dict[tool_name] = tool_data
 
@@ -151,15 +150,13 @@ for tool_name, file_path in tool_files.items():
     tool_data = pd.read_csv(file_path, sep="\t", header=None)
     tool_data = tool_data[tool_data.apply(lambda row: len(row.dropna()) > 3, axis=1)]
     groundtruth_tool_data = tool_data.iloc[:, [0, 5]].copy() 
-    
-    groundtruth_tool_data[['chr', 'pos', 'strand']] = groundtruth_tool_data[0].str.split('_', expand=True)
-    groundtruth_tool_data = groundtruth_tool_data.drop(columns=[0, 'strand'])
-    groundtruth_tool_data[groundtruth_tool_data.columns[0]] = pd.to_numeric(groundtruth_tool_data[groundtruth_tool_data.columns[0]], errors='coerce')
-    groundtruth_tool_data = groundtruth_tool_data.rename(columns={groundtruth_tool_data.columns[0]: f"groundtruth"})
-    groundtruth_tool_data['chr_pos'] = groundtruth_tool_data['chr'] + '_' + groundtruth_tool_data['pos']
+    groundtruth_tool_data.columns = ['chr_pos', 'value']
+    groundtruth_tool_data[groundtruth_tool_data.columns[1]] = pd.to_numeric(groundtruth_tool_data[groundtruth_tool_data.columns[1]], errors='coerce')
+    groundtruth_tool_data = groundtruth_tool_data.rename(columns={groundtruth_tool_data.columns[1]: f"groundtruth"})
     groundtruth_tool_data = groundtruth_tool_data[['chr_pos', f"groundtruth"]]
     groundtruth_tool_data = groundtruth_tool_data[groundtruth_tool_data[f"groundtruth"] != 0] 
     groundtruth_data[tool_name] = groundtruth_tool_data
 
 
 create_pairwise_plot(tool_data_dict, groundtruth_data, "groundtruth")
+

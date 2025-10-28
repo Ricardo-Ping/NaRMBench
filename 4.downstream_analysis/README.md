@@ -10,7 +10,7 @@ $ {model}_m6A_with_labels_converted.txt
 ## Script Descriptions
 - Generate ROC and PR curves, and quantification accuracy: [Script](Fig2-3.py)
 - Generate meta-gene plots, and WT vs. KO (or unmodified IVT) comparisons: [Script](Fig4.r)
-- Determine the optimal classification cut-off for each model: [Script](Suppl_Fig5_optimal_cutoff.py)
+- Determine the optimal classification cut-off for each tool: [Script](Suppl_Fig5_optimal_cutoff.py)
 - Calculate replicates overlap and correlation, and evaluates sequencing depth bias, modification level bias, and motif bias: [Script](Fig5.py)
 - Generate F1 score curve: [Script](Suppl_Fig6_all_F1.py)
 - Generate radar plots for performance comparison: [Script](Fig6.r)

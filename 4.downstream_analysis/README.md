@@ -4,8 +4,8 @@ After model evaluation, the following scripts can be used for visualize the down
 The scripts below requires model output data in the following format (see example date in `example_data/` directory):
 ```sh
 $ {model}_m6A_with_labels_converted.txt
-#pos	label	prob	motif	depth	ratio
-#chr1_1013990	0	0.0103	GGACC	97	0
+pos	label	prob	motif	depth	ratio
+chr1_1013990	0	0.0103	GGACC	97	0
 ```
 - `label`: 0 or 1 representing whether the site is a positive site; `prob`: Model-predicted probability; `ratio`: Model-predicted ratio of positive sites
 

@@ -7,7 +7,7 @@ $ {model}_m6A_with_labels_converted.txt
 #pos	label	prob	motif	depth	ratio
 #chr1_1013990	0	0.0103	GGACC	97	0
 ```
-- `label`: 0 or 1 representing whether the site is a positive site; `prob`: Model-predicted probability; `ratio`: True ratio of positive sites
+- `label`: 0 or 1 representing whether the site is a positive site; `prob`: Model-predicted probability; `ratio`: Model-predicted ratio of positive sites
 
 ## Script Descriptions
 - Generate ROC and PR curves, and quantification accuracy: [Script](Fig2-3.py)

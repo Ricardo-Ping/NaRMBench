@@ -15,17 +15,6 @@ precision_values = []
 recall_values = []
 f1_scores = []
 
-
-# Define the thresholds for specific tools
-tool_thresholds = {
-    'Xron-RNA004': 0.01,
-    'Dorado-RNA004': 0.2,
-    'SingleMod-RNA004': 0.17,
-    'TandemMod-RNA004' :0.68,
-    'm6Anet-RNA004':0.75,
-    'Epinano-RNA004':0.48
-}
-
 for label in labels:
     row = thresholds_data[thresholds_data['Label'] == label]
     if not row.empty:
@@ -43,7 +32,6 @@ for label in labels:
         data = [line.strip().split('\t') for line in f]
 
     third_column_values = [float(row[2]) for row in data]
-    threshold = tool_thresholds[label]
 
 sorted_indices = np.argsort(f1_scores)[::-1]
 
@@ -68,5 +56,3 @@ handles.extend(line_handles)
 labels_legend.extend(line_labels)
 plt.tight_layout(pad=0.1)
 plt.savefig("./F1score_curve_m6A.pdf")
-
-

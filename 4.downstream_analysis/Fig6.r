@@ -4,7 +4,14 @@ library(tibble)
 #radar data : Supplementary Table 4 
 data=read.csv("m6A_redar.csv",check.names = FALSE)
 data_normalized <- data
-cols_invert_max_minus <- c("Motif bias", "Depth bias", "Modification level bias","Speed", "Memory efficiency","Differen between KO and WT")
+cols_invert_1_minus <- c("Motif bias", "Depth bias", "Modification level bias")
+for (col in cols_invert_1_minus) {
+    data_normalized[[col]] <- 1 - data_normalized[[col]]
+}
+cols_invert_max_minus <- c("Speed", "Memory efficiency","Differen between KO and WT")
+for (col in cols_invert_max_minus) {
+    data_normalized[[col]] <- max(data_normalized[[col]]) - data_normalized[[col]]
+}
 for (col in cols_invert_max_minus) {
     data_normalized[[col]] <- (data_normalized[[col]] - min(data_normalized[[col]])) /
                               (max(data_normalized[[col]]) - min(data_normalized[[col]]))
@@ -32,4 +39,5 @@ radarchart(
   axislabcol = "grey",
   vlcex = 0.2, vlabels = colnames(data_radar_numeric),
   caxislabels = c("","","","",""),axistype = 0)
+
 dev.off()

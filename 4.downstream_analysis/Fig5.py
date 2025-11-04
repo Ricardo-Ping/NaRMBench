@@ -38,7 +38,19 @@ def save_jaccard_results(results, output_path):
     transposed_results.columns = ["1vs2", "1vs3", "2vs3"]
     
     transposed_results.to_csv(output_path, sep="\t", header=True, index_label="Model")
-
+def plot_heatmap(jaccard_df, output_path):
+    plt.figure(figsize=(10, 8))
+    ax = sns.heatmap(jaccard_df, 
+                     cmap="Reds",  
+                     cbar_kws={'label': 'Jaccard Index'},  
+                     linewidths=0.5,  
+                     linecolor='white')  
+    plt.xlabel("Comparison Pairs", fontsize=12)
+    plt.ylabel("Models", fontsize=12)
+    plt.tight_layout()
+    plt.savefig(output_path, dpi=300, bbox_inches='tight')
+    plt.show()
+    
 def main():
     folder_path_HeLa3 = "replicate1"
     folder_path_HeLa2 = "replicate2"
@@ -67,16 +79,13 @@ def main():
 
     output_path = "jaccard_results.tsv"
     save_jaccard_results(results, output_path)
+    output_path_heatmap = "jaccard_heatmap.png"
+    plot_heatmap(jaccard_df, output_path_heatmap)
+    
 if __name__ == "__main__":
     main()
 
 ##signal correlation (Pearson’s r) 
-extract = {}
-with open("extract.txt",'r') as f:
-    for line in f:
-        key,value = line.strip().split(',')
-        extract[key.strip()]=value.strip()
-
 def read_bed_files(folder_path):
     bed_data = {}
     
@@ -85,37 +94,60 @@ def read_bed_files(folder_path):
             model_name = filename.split('_')[0]
             file_path = os.path.join(folder_path, filename)
             data = pd.read_csv(file_path, sep="\t", header=0)
-            data[['chrom', 'start']] = data[0].str.split('_', expand=True)
+            data[['chrom', 'start']] = data.iloc[:, 0].astype(str).str.split('_', expand=True)
             data[['end']] = data[['start']]
-            column = data.columns.tolist()
-            column[:4] = ["chrom", "start", "end"]
-            data.columns = column
+            columns = data.columns.tolist()
+            columns[:3] = ["chrom", "start", "end"]
+            data.columns = columns
             data["site"] = list(zip(data["chrom"], data["start"], data["end"]))
             data["prediction"] = data.iloc[:, 5]  
-            bed_data[model] = data
+            bed_data[model_name] = data 
     return bed_data
 
 def correlation(bed_data_HeLa,bed_data_HeLa2,bed_data_HeLa3,model):
     try:
-        df_merged = bed_data_HeLa[model].iloc[:,-2:].merge(bed_data_HeLa2[model].iloc[:,-2:], on='site', how='inner')\
-            .merge(bed_data_HeLa3[model].iloc[:,-2:], on='site', how='inner')
-        
-        colname = df_merged.columns.tolist()
-        colname = ["site", "1", "2", "3"]
-        df_merged.columns = colname
-
-        correlation_matrix = df_merged[['Hela', 'Hela2', 'Hela3']].corr()
-
-        plt.figure(figsize=(8, 6))
-        sns.heatmap(correlation_matrix, annot=True, cmap='coolwarm', vmin=-1, vmax=1, 
-                    xticklabels=['1', '2', '3'], 
-                    yticklabels=['1', '2', '3'])
-        output_path = f'{model}_cor.pdf'
-        plt.savefig(output_path, format='pdf')
-        plt.close()
+        df_merged = bed_data_HeLa[model].iloc[:, -2:].merge(
+            bed_data_HeLa2[model].iloc[:, -2:], on='site', how='inner', suffixes=('_1', '_2')
+        ).merge(
+            bed_data_HeLa3[model].iloc[:, -2:], on='site', how='inner'
+        )
+        colnames = df_merged.columns.tolist()
+        colnames = ["site", "1", "2", "3"]
+        df_merged.columns = colnames
+        correlation_matrix = df_merged[['1', '2', '3']].corr()   
+        return correlation_matrix
     except KeyError as e:
         print(f"KeyError: {e} - Skipping model: {model}")
-
+        return None
+def plot_comprehensive_heatmap(correlation_results, output_path="comprehensive_correlation_heatmap.pdf"):
+    heatmap_data = []
+    tools = []
+    for tool, corr_matrix in correlation_results.items():
+        if corr_matrix is not None:
+            tools.append(tool)
+            corr_1vs2 = corr_matrix.iloc[0, 1]  # Rep1 vs Rep2
+            corr_1vs3 = corr_matrix.iloc[0, 2]  # Rep1 vs Rep3
+            corr_2vs3 = corr_matrix.iloc[1, 2]  # Rep2 vs Rep3
+            heatmap_data.append([corr_1vs2, corr_1vs3, corr_2vs3])
+    heatmap_df = pd.DataFrame(heatmap_data, 
+                             index=tools, 
+                             columns=['Rep1vsRep2', 'Rep1vsRep3', 'Rep2vsRep3'])
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(heatmap_df, 
+                cmap='Reds',  
+                vmin=0, 
+                vmax=1,
+                linewidths=0.5,
+                linecolor='white',
+                cbar_kws={'label': 'Correlation Coefficient'})
+    plt.xlabel('Replicate Comparisons', fontsize=12)
+    plt.ylabel('Tools', fontsize=12)
+    plt.xticks(rotation=45)
+    plt.yticks(rotation=0)
+    plt.tight_layout()
+    plt.savefig(output_path, format='pdf', bbox_inches='tight')
+    return heatmap_df
+    
 folder_path_HeLa3 = "replicate3"
 folder_path_HeLa2 = "replicate2"
 folder_path_HeLa = "replicate1"
@@ -123,8 +155,11 @@ bed_data_HeLa3 = read_bed_files(folder_path_HeLa3)
 bed_data_HeLa2 = read_bed_files(folder_path_HeLa2)
 bed_data_HeLa = read_bed_files(folder_path_HeLa)
 tools <- ["Xron", "Dorado","SingleMod","TandemMod-retrain","m6Anet",'EpiNano-retrain']
+correlation_results = {}
 for model in tools: 
-    correlation(bed_data_HeLa,bed_data_HeLa2,bed_data_HeLa3,model)
+    corr_matrix = correlation(bed_data_HeLa, bed_data_HeLa2, bed_data_HeLa3, model)
+    correlation_results[model] = corr_matrix
+    comprehensive_df = plot_comprehensive_heatmap(correlation_results)
 
 
 ##sequencing depth bias
@@ -354,6 +389,7 @@ plt.tick_params(axis='y', labelsize=4)
 plt.tight_layout(pad=0.1)
 plt.savefig(f"./m6A_recall_motif.pdf", bbox_inches='tight')
 plt.close()
+
 
 
 

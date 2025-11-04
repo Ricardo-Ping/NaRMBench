@@ -10,17 +10,12 @@ mpl.rcParams['pdf.fonttype'] = 42
 def read_bed_files(folder_path):
     bed_data = {}
     for filename in os.listdir(folder_path):
-        if filename.endswith(".txt"):
-            model_name = filename.split('_')[0]
+        if filename.endswith(".bed"):
+            model_name = filename.split('.')[0]
             file_path = os.path.join(folder_path, filename)
-            
-            data=pd.read_csv(file_path, sep='\t', header=None)
-            data[['chrom', 'start']] = data[0].str.split('_', expand=True)
-            data[['end']] = data[['start']]
+            data = pd.read_csv(file_path, sep="\t", header=1, names=["chrom", "start", "end"])
             bed_data[model_name] = data
-
     return bed_data 
-
 def get_positions(bed_data, model):
     positions = set()
     if model in bed_data: 
@@ -88,14 +83,11 @@ if __name__ == "__main__":
 ##signal correlation (Pearson’s r) 
 def read_bed_files(folder_path):
     bed_data = {}
-    
     for filename in os.listdir(folder_path):
-        if filename.endswith("_m6A_with_labels_converted.txt"):
+        if filename.endswith(".bed"):
             model_name = filename.split('_')[0]
             file_path = os.path.join(folder_path, filename)
-            data = pd.read_csv(file_path, sep="\t", header=0)
-            data[['chrom', 'start']] = data.iloc[:, 0].astype(str).str.split('_', expand=True)
-            data[['end']] = data[['start']]
+            data = pd.read_csv(file_path, sep="\t", header=1)
             columns = data.columns.tolist()
             columns[:3] = ["chrom", "start", "end"]
             data.columns = columns
@@ -389,6 +381,7 @@ plt.tick_params(axis='y', labelsize=4)
 plt.tight_layout(pad=0.1)
 plt.savefig(f"./m6A_recall_motif.pdf", bbox_inches='tight')
 plt.close()
+
 
 
 

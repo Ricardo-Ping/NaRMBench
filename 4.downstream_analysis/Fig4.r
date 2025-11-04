@@ -33,12 +33,12 @@ ggsave("m6A_distribution.pdf",p,height=7,width=10)
 
 # Define tool thresholds
 tool_thresholds <- list(
-    'Xron-RNA004'= 0.01,
-    'Dorado-RNA004'= 0.2,
-    'SingleMod-RNA004'= 0.17,
-    'TandemMod-RNA004'=0.68,
-    'm6Anet-RNA004'=0.75,
-    'EpiNano-RNA004'=0.48
+    'Xron'= 0.01,
+    'Dorado'= 0.2,
+    'SingleMod'= 0.17,
+    'TandemMod-retrain'=0.68,
+    'm6Anet'=0.75,
+    'EpiNano-retrain'=0.48
 )
 
 tools <- c("Xron", "Dorado","SingleMod","TandemMod-retrain","m6Anet",'EpiNano-retrain')
@@ -117,8 +117,6 @@ tools_ordered <- output_data$Tool
 plot_data <- output_data %>%
   select(Tool, WT_KO_WT, WT_gt_KO_WT_KO) %>%
   pivot_longer(cols = -Tool, names_to = "Type", values_to = "Value")
-#if(1==2){
-# Plot the ratios
 ggplot(plot_data, aes(x = factor(Tool, levels = tools_ordered), y = Value, fill = Type)) +
   geom_bar(stat = "identity", position = position_dodge(width = 0.8), width = 0.7) +
   scale_fill_manual(values = c("WT_KO_WT" = "lightblue", "WT_gt_KO_WT_KO" = "orange"),
@@ -142,4 +140,5 @@ ggplot(ratio_data, aes(x = factor(Tool, levels = tools_ordered), y = ratio_log2,
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ggsave("m6A_count_barplot.pdf", width = 8, height = 5)
+
 

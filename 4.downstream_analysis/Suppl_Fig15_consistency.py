@@ -16,8 +16,8 @@ def read_bed_file(file_path):
     return data
 
 def calculate_overlap(df1, df2):
-    merged = pd.merge(df1, df2, on=['chr', 'start', 'end'], how='inner')
-    union = pd.concat([df1, df2]).drop_duplicates(subset=['chr', 'start', 'end'])
+    merged = pd.merge(df1, df2, on=['chr', 'pos'], how='inner')
+    union = pd.concat([df1, df2]).drop_duplicates(subset=['chr', 'pos'])
     return len(merged) / len(union)
 def get_prefix(file_name):
     return file_name.split('_m6A_with_labels_converted.txt')[0]
@@ -159,4 +159,5 @@ for tool_name, file_path in tool_files.items():
 
 
 create_pairwise_plot(tool_data_dict, groundtruth_data, "groundtruth")
+
 

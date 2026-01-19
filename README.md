@@ -53,3 +53,8 @@ More scripts for visualization (e.g., distribution of predicted sites, replicate
 - Miao Wang
 - Faying Chen
 - Jiejun Shi
+
+## Citation
+Please cite the following paper if you use NaRMBench:
+
+Tingting Luo#, Moping Xu#, Miao Wang, Faying Chen, Jiejun Shi*. Systematic evaluation of computational tools for multitype RNA modification detection using nanopore direct RNA sequencing. [***Nature Methods*** (2025).](https://www.nature.com/articles/s41592-025-02974-y)

@@ -1,0 +1,21 @@
+[loss_function]
+loss_function_type = "binary_cross_entropy_loss"
+
+[dataset]
+root_dir = "/data/pingyc/projects/20250601_RNA/data/HEK293T-S1/m6Anet"
+min_reads = 20
+norm_path = "/data/pingyc/projects/20250601_RNA/data/HEK293T-S1/m6Anet/norm_dict_nanopolish.joblib"
+num_neighboring_features = 1
+
+[dataloader]
+    [dataloader.train]
+    batch_size = 256
+    sampler = "ImbalanceUnderSampler"
+
+    [dataloader.val]
+    batch_size = 256
+    shuffle = false
+
+    [dataloader.test]
+    batch_size = 256
+    shuffle = false
